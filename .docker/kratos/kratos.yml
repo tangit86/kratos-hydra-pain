@@ -1,0 +1,99 @@
+serve:
+  public:
+    base_url: to_override
+    cors:
+      enabled: true
+  admin:
+    base_url: http://127.0.0.1:4434/
+
+oauth2_provider:
+  url: "http://127.0.0.1:4445"
+
+selfservice:
+  default_browser_return_url: to_override
+  allowed_return_urls:
+    - http://127.0.0.1:4455
+    - http://auth-local.casablancas.gr/auth/ui
+    - http://192.168.2.8:3000/callback
+    - http://localhost:3000/callback
+    - exp://localhost:8081/--/Callback
+
+  methods:
+    password:
+      enabled: true
+    totp:
+      config:
+        issuer: Kratos
+      enabled: true
+    lookup_secret:
+      enabled: true
+    link:
+      enabled: true
+    code:
+      enabled: true
+  flows:
+
+    login:
+      ui_url: to_override
+      lifespan: 10m
+
+    error:
+      ui_url: to_override
+
+    settings:
+      ui_url: to_override
+      privileged_session_max_age: 15m
+      required_aal: highest_available
+
+    recovery:
+      enabled: false
+      ui_url: to_override
+      use: code
+
+    verification:
+      enabled: false
+      ui_url: to_override
+      use: code
+
+    registration:
+      lifespan: 10m
+      ui_url: to_override
+      after:
+        password:
+          hooks:
+            - hook: session
+            - hook: show_verification_ui
+
+log:
+  level: trace
+  format: text
+  leak_sensitive_values: true
+
+secrets:
+  cookie:
+    - PLEASE-CHANGE-ME-I-AM-VERY-INSECURE
+  cipher:
+    - 32-LONG-SECRET-NOT-SECURE-AT-ALL
+
+ciphers:
+  algorithm: xchacha20-poly1305
+#
+#cookies:
+#  domain: https://auth-local.casablancas.gr
+#  path: /auth
+#  same_site: Lax
+
+hashers:
+  algorithm: bcrypt
+  bcrypt:
+    cost: 8
+
+identity:
+  default_schema_id: default
+  schemas:
+    - id: default
+      url: file:///app/kratos/identity.schema.json
+
+courier:
+  smtp:
+    connection_uri: smtps://test:test@mailslurper:1025/?skip_ssl_verify=true
